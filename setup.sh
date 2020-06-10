@@ -23,13 +23,17 @@ backup_if_exists $HOME/.zshrc
 backup_if_exists $HOME/.oh-my-zsh
 backup_if_exists $HOME/.tmux.conf
 backup_if_exists $HOME/.vimrc
+backup_if_exists $HOME/.gitconfig
+backup_if_exists $HOME/.gitignore_global
 
 # Copy files
 cp zshrc $HOME/.zshrc
-tar xvzf oh-my-zsh.tar.gz
+tar xvzf zsh/oh-my-zsh.tar.gz
 cp -r oh-my-zsh/.oh-my-zsh $HOME/.oh-my-zsh
-cp tmux/tmux.conf $HOME/.tmux.conf
+cp tmux.conf $HOME/.tmux.conf
 cp vim/vimrc $HOME/.vimrc
+cp git/gitconfig $HOME/.gitconfig
+cp git/gitignore_global $HOME/.gitignore_global
 
 # Install ncurses
 install_ncurse() {

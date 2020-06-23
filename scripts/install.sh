@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Install dependencies on rhel/centos 7
 
 # What do we want?

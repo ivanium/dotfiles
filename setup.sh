@@ -27,11 +27,11 @@ backup_if_exists $HOME/.gitconfig
 backup_if_exists $HOME/.gitignore_global
 
 # Copy files
-cp zshrc $HOME/.zshrc
-tar xvzf zsh/oh-my-zsh.tar.gz
+cp zsh/zshrc $HOME/.zshrc
+tar xzf zsh/oh-my-zsh.tar.gz
 cp -r oh-my-zsh/.oh-my-zsh $HOME/.oh-my-zsh
 
-cp tmux.conf $HOME/.tmux.conf
+cp tmux/tmux.conf $HOME/.tmux.conf
 
 cp vim/vimrc $HOME/.vimrc
 mkdir -p $HOME/.vim

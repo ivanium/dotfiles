@@ -30,48 +30,14 @@ backup_if_exists $HOME/.gitignore_global
 cp zshrc $HOME/.zshrc
 tar xvzf zsh/oh-my-zsh.tar.gz
 cp -r oh-my-zsh/.oh-my-zsh $HOME/.oh-my-zsh
+
 cp tmux.conf $HOME/.tmux.conf
+
 cp vim/vimrc $HOME/.vimrc
+mkdir -p $HOME/.vim
+cp -r vim/autoload $HOME/.vim/
+cp -r vim/ftplugin $HOME/.vim/
+
 cp git/gitconfig $HOME/.gitconfig
 cp git/gitignore_global $HOME/.gitignore_global
-
-# Install ncurses
-install_ncurse() {
-    # set paths
-    mkdir -p $HOME/pkgs
-    mkdir -p $HOME/tools
-    pushd $HOME/pkgs
-
-    wget ftp://ftp.invisible-island.net/ncurses/ncurses-6.2.tar.gz
-    tar -zxvf ncurses-6.2.tar.gz
-
-    cd ncurses-6.2
-    export CXXFLAGS=' -fPIC'
-    export CFLAGS=' -fPIC'
-    ./configure --prefix=$HOME/tools --enable-shared
-
-    make -j
-    make install
-
-    popd
-}
-
-# install zsh
-install_zsh() {
-    # set paths
-    mkdir -p $HOME/pkgs
-    mkdir -p $HOME/tools
-    pushd $HOME/pkgs
-
-    # Clone zsh repository from git
-    git clone git://github.com/zsh-users/zsh.git
-    cd zsh
-    autoheader
-    autoconf
-    ./configure --prefix=$HOME/tools --enable-shared
-    make -j
-    make install
-
-    popd
-}
 

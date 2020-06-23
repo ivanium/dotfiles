@@ -131,6 +131,9 @@ nmap <leader>w :call <SID>StripTrailingWhitespaces()<CR>:w!<cr>
 nmap <Leader>q :q<CR>
 nmap <Leader>wq :call <SID>StripTrailingWhitespaces()<CR>:wq<CR>
 
+" NERDTree
+nmap <Leader>n :NERDTreeToggle<CR>
+
 
 " :W sudo saves the file
 " (useful for handling the permission-denied error)
@@ -489,3 +492,30 @@ function! VisualSelection(direction, extra_filter) range
     let @/ = l:pattern
     let @" = l:saved_reg
 endfunction
+
+
+" =============================================================================
+"   PLUGINS
+" =============================================================================
+call plug#begin()
+
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
+
+Plug 'tpope/vim-commentary'
+Plug 'terryma/vim-multiple-cursors'
+
+Plug 'preservim/nerdtree'
+Plug 'tpope/vim-repeat'
+
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } " FZF plugin, makes Ctrl-P unnecessary
+Plug 'junegunn/fzf.vim'
+
+" Autocomplete
+Plug 'ervandew/supertab'
+" Semantic language support
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+Plug 'wakatime/vim-wakatime' " Wakatime time tracking
+call plug#end()
+

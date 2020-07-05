@@ -68,9 +68,10 @@ vnoremap <Up> <Nop>
 " toggle between number and relativenumber
 function! ToggleNumber()
     if(&relativenumber == 1)
-        set norelativenumber
         set number
+        set norelativenumber
     else
+        set number
         set relativenumber
     endif
 endfunc
@@ -504,6 +505,9 @@ Plug 'tpope/vim-surround'
 
 Plug 'tpope/vim-commentary'
 Plug 'terryma/vim-multiple-cursors'
+
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 
 Plug 'preservim/nerdtree'
 Plug 'tpope/vim-repeat'

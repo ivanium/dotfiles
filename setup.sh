@@ -33,10 +33,9 @@ cp -r oh-my-zsh/.oh-my-zsh $HOME/.oh-my-zsh
 
 cp tmux/tmux.conf $HOME/.tmux.conf
 
-cp vim/vimrc $HOME/.vimrc
+mv vim/vimrc $HOME/.vimrc
 mkdir -p $HOME/.vim
-cp -r vim/autoload $HOME/.vim/
-cp -r vim/ftplugin $HOME/.vim/
+cp -r vim/ $HOME/.vim/
 
 cp git/gitconfig $HOME/.gitconfig
 cp git/gitignore_global $HOME/.gitignore_global

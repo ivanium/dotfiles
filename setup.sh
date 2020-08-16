@@ -35,7 +35,7 @@ cp tmux/tmux.conf $HOME/.tmux.conf
 
 mv vim/vimrc $HOME/.vimrc
 mkdir -p $HOME/.vim
-cp -r vim/ $HOME/.vim/
+cp -r vim/* $HOME/.vim/
 
 cp git/gitconfig $HOME/.gitconfig
 cp git/gitignore_global $HOME/.gitignore_global

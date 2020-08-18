@@ -30,6 +30,7 @@ backup_if_exists $HOME/.gitignore_global
 cp zsh/zshrc $HOME/.zshrc
 tar xzf zsh/oh-my-zsh.tar.gz
 cp -r oh-my-zsh/.oh-my-zsh $HOME/.oh-my-zsh
+cp zsh/p10k.zsh $HOME/.p10k.zsh
 
 cp tmux/tmux.conf $HOME/.tmux.conf
 

@@ -79,7 +79,7 @@ install_zsh() {
     pushd $PKGS
 
     curl -OL "https://sourceforge.net/projects/zsh/files/zsh/$zshversion/zsh-$zshversion.tar.xz"
-    tar -xzf "zsh-$zshversion.tar.gz"
+    tar -xf "zsh-$zshversion.tar.xz"
     cd "zsh-$zshversion"
     autoheader
     autoconf

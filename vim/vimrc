@@ -490,7 +490,7 @@ Plug 'junegunn/fzf.vim'
 " Autocomplete
 Plug 'ervandew/supertab'
 " Semantic language support
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
-Plug 'wakatime/vim-wakatime' " Wakatime time tracking
+" Plug 'wakatime/vim-wakatime' " Wakatime time tracking
 call plug#end()

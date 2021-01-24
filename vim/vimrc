@@ -220,9 +220,15 @@ if $COLORTERM == 'gnome-terminal'
     set t_Co=256
 endif
 
+call plug#begin()
+Plug 'sheerun/vim-polyglot'
+Plug 'joshdick/onedark.vim'
+call plug#end()
+
 try
-    colorscheme desert
+    colorscheme onedark
 catch
+    colorscheme desert
 endtry
 
 set background=dark
@@ -478,8 +484,11 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-commentary'
 Plug 'terryma/vim-multiple-cursors'
 
+Plug 'sheerun/vim-polyglot'
+Plug 'joshdick/onedark.vim'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+let g:airline_theme='onedark'
 
 Plug 'preservim/nerdtree'
 Plug 'tpope/vim-repeat'

@@ -36,7 +36,7 @@ cp zsh/p10k.zsh $HOME/.p10k.zsh
 
 cp tmux/tmux.conf $HOME/.tmux.conf
 
-mv vim/vimrc $HOME/.vimrc
+cp vim/vimrc $HOME/.vimrc
 mkdir -p $HOME/.vim
 cp -r vim/* $HOME/.vim/
 

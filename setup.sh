@@ -18,8 +18,15 @@ link() {
     ln -s "$src" "$dst"
 }
 
+# Clone $1 into $2, or fast-forward an existing clone.
 clone() {
-    [ -d "$2" ] || git clone --depth 1 "$1" "$2"
+    if [ ! -d "$2" ]; then
+        git clone --depth 1 "$1" "$2"
+    elif [ ! -d "$2/.git" ]; then
+        echo "Warning: $2 is not a git clone, not updating" >&2
+    elif ! git -C "$2" pull --ff-only --quiet; then
+        echo "Warning: could not update $2, skipping" >&2
+    fi
 }
 
 # Keep the existing git identity, which no longer lives in the repo.

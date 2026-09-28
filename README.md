@@ -10,7 +10,7 @@ Simple custom configurations for:
 
 `./setup.sh` symlinks the configs into `$HOME` (existing files are moved to
 `*.bk.<timestamp>`) and clones oh-my-zsh, powerlevel10k and the zsh plugins.
-It is safe to re-run.
+Re-running it updates those clones (fast-forward only) and is otherwise a no-op.
 
 Per-machine settings go in files that are not tracked here:
 * `~/.gitconfig_local` — git `[user]` name/email (setup.sh migrates your existing identity)

@@ -1,7 +1,3 @@
-[user]
-    name = Yifan Qiao
-    email = yifanqiao@berkeley.edu
-
 [core]
     editor = vim
     excludesfile = ~/.gitignore_global
@@ -17,7 +13,7 @@
     line = "%C(auto)%h %<|(60,trunc)%s %C(green)%ad%C(auto)%d"
     detail = "%C(auto)%h %s%n  %C(yellow)by %C(blue)%an %C(magenta)<%ae> [%G?] %C(green)%ad%n %C(auto)%d%n"
 
-# Allow local customizations in the .gitconfig_local file
+# Per-machine settings, including [user] name/email, go in ~/.gitconfig_local
 [include]
     path = ~/.gitconfig_local
 

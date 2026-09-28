@@ -116,7 +116,6 @@ nmap <Leader>n :NERDTreeToggle<CR>
 command! W execute 'w !sudo tee % > /dev/null' <bar> edit!
 nmap <leader>W :call <SID>StripTrailingWhitespaces()<CR>:W<cr>
 
-set autochdir
 set nojoinspaces
 set mouse+=a
 if &term =~ '^screen'
@@ -135,12 +134,6 @@ augroup END
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set 7 lines to the cursor - when moving vertically using j/k
 set so=7
-
-" Avoid garbled characters in Chinese language windows OS
-let $LANG='en'
-set langmenu=en
-source $VIMRUNTIME/delmenu.vim
-source $VIMRUNTIME/menu.vim
 
 " Turn on the Wild menu
 set wildmenu
@@ -217,18 +210,13 @@ set foldcolumn=1
 " Enable syntax highlighting
 syntax enable
 
-" Enable 256 colors palette in Gnome Terminal
-if $COLORTERM == 'gnome-terminal'
-    set t_Co=256
-endif
-
 call plug#begin()
 
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 
 Plug 'tpope/vim-commentary'
-Plug 'terryma/vim-multiple-cursors'
+Plug 'mg979/vim-visual-multi'
 
 Plug 'sheerun/vim-polyglot'
 Plug 'joshdick/onedark.vim'
@@ -270,7 +258,7 @@ endif
 set encoding=utf8
 
 " Use Unix as the standard file type
-set ffs=unix,dos,mac
+set ffs=unix,dos
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -394,7 +382,7 @@ nmap <M-k> mz:m-2<cr>`z
 vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
 vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
 
-if has("mac") || has("macunix")
+if has("macunix")
   nmap <D-j> <M-j>
   nmap <D-k> <M-k>
   vmap <D-j> <M-j>

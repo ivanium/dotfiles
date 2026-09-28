@@ -81,6 +81,9 @@ set nocompatible
 set history=500
 set undofile
 set undodir=~/.vim/undodir
+if !isdirectory(expand(&undodir))
+    call mkdir(expand(&undodir), 'p')
+endif
 
 " Enable filetype plugins
 filetype plugin on
@@ -96,8 +99,8 @@ let mapleader = ","
 
 " Call custom functions
 nnoremap <leader>s :call <SID>StripTrailingWhitespaces()<CR>
-nnoremap <leader>t :call ToggleNumber()<CR>
-nnoremap <leader>nt :call UnToggleNumber()<CR>
+nnoremap <leader>r :call ToggleNumber()<CR>
+nnoremap <leader>N :call UnToggleNumber()<CR>
 
 " Fast saving
 nmap <leader>w :call <SID>StripTrailingWhitespaces()<CR>:w!<cr>
@@ -114,11 +117,10 @@ command! W execute 'w !sudo tee % > /dev/null' <bar> edit!
 nmap <leader>W :call <SID>StripTrailingWhitespaces()<CR>:W<cr>
 
 set autochdir
-set scrolloff=5
 set nojoinspaces
 set mouse+=a
 if &term =~ '^screen'
-    set ttpmouse=xterm2
+    set ttymouse=xterm2
 endif
 
 augroup CursorLineOnlyInActiveWindow
@@ -221,8 +223,31 @@ if $COLORTERM == 'gnome-terminal'
 endif
 
 call plug#begin()
+
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
+
+Plug 'tpope/vim-commentary'
+Plug 'terryma/vim-multiple-cursors'
+
 Plug 'sheerun/vim-polyglot'
 Plug 'joshdick/onedark.vim'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+let g:airline_theme='onedark'
+
+Plug 'preservim/nerdtree'
+Plug 'tpope/vim-repeat'
+
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } " FZF plugin, makes Ctrl-P unnecessary
+Plug 'junegunn/fzf.vim'
+
+" Autocomplete
+Plug 'ervandew/supertab'
+" Semantic language support
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+" Plug 'wakatime/vim-wakatime' " Wakatime time tracking
 call plug#end()
 
 try
@@ -377,17 +402,7 @@ if has("mac") || has("macunix")
 endif
 
 " Delete trailing white space on save, useful for some filetypes ;)
-fun! CleanExtraSpaces()
-    let save_cursor = getpos(".")
-    let old_query = getreg('/')
-    silent! %s/\s\+$//e
-    call setpos('.', save_cursor)
-    call setreg('/', old_query)
-endfun
-
-if has("autocmd")
-    autocmd BufWritePre *.txt,*.js,*.py,*.wiki,*.sh,*.coffee :call CleanExtraSpaces()
-endif
+autocmd BufWritePre *.txt,*.js,*.py,*.wiki,*.sh,*.coffee :call <SID>StripTrailingWhitespaces()
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -408,9 +423,6 @@ map <leader>s? z=
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Remove the Windows ^M - when the encodings gets messed up
 noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
-
-" Quickly open a buffer for scribble
-map <leader>q :e ~/buffer<cr>
 
 " Quickly open a markdown buffer for scribble
 map <leader>x :e ~/buffer.md<cr>
@@ -472,34 +484,3 @@ function! VisualSelection(direction, extra_filter) range
     let @" = l:saved_reg
 endfunction
 
-
-" =============================================================================
-"   PLUGINS
-" =============================================================================
-call plug#begin()
-
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-surround'
-
-Plug 'tpope/vim-commentary'
-Plug 'terryma/vim-multiple-cursors'
-
-Plug 'sheerun/vim-polyglot'
-Plug 'joshdick/onedark.vim'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-let g:airline_theme='onedark'
-
-Plug 'preservim/nerdtree'
-Plug 'tpope/vim-repeat'
-
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } " FZF plugin, makes Ctrl-P unnecessary
-Plug 'junegunn/fzf.vim'
-
-" Autocomplete
-Plug 'ervandew/supertab'
-" Semantic language support
-" Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
-" Plug 'wakatime/vim-wakatime' " Wakatime time tracking
-call plug#end()

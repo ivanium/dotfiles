@@ -1,28 +1,36 @@
 #!/usr/bin/env bash
-
-# Install dependencies on rhel/centos 7
+# Build tmux/zsh (and libevent/ncurses if missing) from source into ~/tools.
+# Building tmux needs yacc (bison). Use `./install.sh deps` first when you have
+# sudo; it installs bison and the libraries from the package manager.
+set -euo pipefail
 
 # What do we want?
-libeventversion=2.1.11
-ncursesversion=6.2
-tmuxversion=3.1
-zshversion=5.8
+libeventversion=2.1.12
+ncursesversion=6.5
+tmuxversion=3.5a
+zshversion=5.9.2
 
 PKGS=$HOME/pkgs
 TOOLS=$HOME/tools
 
-OS_DISTRO=$( awk -F= '/^NAME/{print $2}' /etc/os-release | sed -e 's/^"//' -e 's/"$//' )
-echo "Installing on $OS_DISTRO..."
+# Find libraries built into $TOOLS, at build and run time
+export CPPFLAGS="-I$TOOLS/include -I$TOOLS/include/ncursesw"
+export LDFLAGS="-L$TOOLS/lib -Wl,-rpath,$TOOLS/lib"
+export PKG_CONFIG_PATH="$TOOLS/lib/pkgconfig"
+
+. /etc/os-release
+echo "Installing on $NAME..."
 
 # install deps
 install_deps() {
-    if [[ $OS_DISTRO == "CentOS Linux" ]]; then
-        INSTALL_LIST="gcc kernel-devel make git"
-        sudo yum install -y $INSTALL_LIST
-    elif [[ $OS_DISTRO == "Ubuntu" ]]; then
-        INSTALL_LIST="build-essential make git"
-        sudo apt install -y $INSTALL_LIST
-    fi
+    case "$ID ${ID_LIKE:-}" in
+        *rhel*|*fedora*|*centos*)
+            sudo yum install -y gcc make git bison libevent-devel ncurses-devel
+            ;;
+        *debian*|*ubuntu*)
+            sudo apt install -y build-essential git bison libevent-dev libncurses-dev
+            ;;
+    esac
 }
 
 # DOWNLOAD SOURCES FOR LIBEVENT AND MAKE AND INSTALL
@@ -34,8 +42,8 @@ install_libevent() {
     curl -OL "https://github.com/libevent/libevent/releases/download/release-$libeventversion-stable/libevent-$libeventversion-stable.tar.gz"
     tar -xzf "libevent-$libeventversion-stable.tar.gz"
     cd "libevent-$libeventversion-stable"
-    ./configure --prefix=$TOOLS
-    make -j
+    ./configure --prefix=$TOOLS --disable-openssl
+    make -j"$(nproc)"
     make install
     popd
 }
@@ -46,13 +54,11 @@ install_ncurse() {
     mkdir -p $TOOLS
     pushd $PKGS
 
-    curl -OL "ftp://ftp.invisible-island.net/ncurses/ncurses-$ncursesversion.tar.gz"
+    curl -OL "https://invisible-island.net/archives/ncurses/ncurses-$ncursesversion.tar.gz"
     tar -xzf "ncurses-$ncursesversion.tar.gz"
     cd "ncurses-$ncursesversion"
-    export CXXFLAGS=" -fPIC"
-    export CFLAGS=" -fPIC"
-    ./configure --prefix=$TOOLS --enable-shared
-    make -j
+    CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure --prefix=$TOOLS --enable-shared --enable-pc-files --with-pkg-config-libdir=$TOOLS/lib/pkgconfig
+    make -j"$(nproc)"
     make install
     popd
 }
@@ -67,7 +73,7 @@ install_tmux() {
     tar -xzf "tmux-$tmuxversion.tar.gz"
     cd "tmux-$tmuxversion"
     ./configure --prefix=$TOOLS
-    make -j
+    make -j"$(nproc)"
     make install
     popd
 }
@@ -78,25 +84,29 @@ install_zsh() {
     mkdir -p $TOOLS
     pushd $PKGS
 
-    curl -OL "https://sourceforge.net/projects/zsh/files/zsh/$zshversion/zsh-$zshversion.tar.xz"
+    curl -L -o "zsh-$zshversion.tar.xz" "https://sourceforge.net/projects/zsh/files/zsh/$zshversion/zsh-$zshversion.tar.xz/download"
     tar -xf "zsh-$zshversion.tar.xz"
     cd "zsh-$zshversion"
-    autoheader
-    autoconf
-    export CXXFLAGS=" -fPIC"
-    export CFLAGS=" -fPIC"
-    ./configure --prefix=$TOOLS --enable-shared
-    make -j
+    CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure --prefix=$TOOLS --enable-shared
+    make -j"$(nproc)"
     make install
     popd
 }
 
-if [[ -z `ldconfig -p | grep libevent` ]]; then
+# Build the libraries only when their headers are missing
+has_header() {
+    [ -f "/usr/include/$1" ] || [ -f "$TOOLS/include/$1" ]
+}
+
+if [[ " $* " == *" deps "* ]]; then
+    install_deps
+fi
+
+if ! has_header event2/event.h; then
     install_libevent
 fi
 
-
-if [[ -z `ldconfig -p | grep libncurse` ]]; then
+if ! has_header ncurses.h && ! has_header ncursesw/ncurses.h; then
     install_ncurse
 fi
 
@@ -106,7 +116,7 @@ if [[ $# == 0 ]]; then
 else
     for var in "${@}"; do
         if [[ $var == "deps" ]]; then
-            install_deps
+            :
         elif [[ $var == "tmux" ]]; then
             install_tmux
         elif [[ $var == "zsh" ]]; then

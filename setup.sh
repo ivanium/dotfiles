@@ -1,45 +1,48 @@
 #!/usr/bin/env bash
+# Symlink dotfiles into $HOME and fetch zsh plugins. Safe to re-run.
+set -euo pipefail
 
-# set -e          # Exit on error
-# set -o pipefail # Exit on pipe error
-# set -x          # Enable verbosity
+DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
 
-# Dont link DS_Store files
-find . -name ".DS_Store" -exec rm {} \;
-
-function backup_if_exists() {
-    if [ -f $1 ];
-    then
-      mv $1 "$1.bk"
+# Move $2 aside unless it is already a link to $1, then link $2 -> $1.
+link() {
+    local src="$DOTFILES/$1" dst="$2"
+    if [ "$(readlink "$dst")" = "$src" ]; then
+        return
     fi
-    if [ -d $1 ];
-    then
-      mv $1 "$1.bk"
+    if [ -e "$dst" ] || [ -L "$dst" ]; then
+        mv "$dst" "$dst.bk.$(date +%Y%m%d%H%M%S)"
     fi
+    mkdir -p "$(dirname "$dst")"
+    ln -s "$src" "$dst"
 }
 
-# Backup files
-backup_if_exists $HOME/.zshrc
-backup_if_exists $HOME/.oh-my-zsh
-backup_if_exists $HOME/.tmux.conf
-backup_if_exists $HOME/.vimrc
-backup_if_exists $HOME/.gitconfig
-backup_if_exists $HOME/.gitignore_global
+clone() {
+    [ -d "$2" ] || git clone --depth 1 "$1" "$2"
+}
 
-# Copy files
-cp zsh/zshrc $HOME/.zshrc
-tar xzf zsh/oh-my-zsh.tar.gz
-cp -r oh-my-zsh/.oh-my-zsh $HOME/.oh-my-zsh
-rm -rf ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-cp zsh/p10k.zsh $HOME/.p10k.zsh
+# Keep the existing git identity, which no longer lives in the repo.
+if [ ! -f "$HOME/.gitconfig_local" ] && email=$(git config --global user.email); then
+    git config -f "$HOME/.gitconfig_local" user.name "$(git config --global user.name)"
+    git config -f "$HOME/.gitconfig_local" user.email "$email"
+fi
 
-cp tmux/tmux.conf $HOME/.tmux.conf
+clone https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh"
+clone https://github.com/romkatv/powerlevel10k.git "$ZSH_CUSTOM/themes/powerlevel10k"
+clone https://github.com/zsh-users/zsh-autosuggestions.git "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
 
-cp vim/vimrc $HOME/.vimrc
-mkdir -p $HOME/.vim
-cp -r vim/* $HOME/.vim/
+link zsh/zshrc            "$HOME/.zshrc"
+link zsh/p10k.zsh         "$HOME/.p10k.zsh"
+link tmux/tmux.conf       "$HOME/.tmux.conf"
+link vim/vimrc            "$HOME/.vimrc"
+link vim/autoload/plug.vim "$HOME/.vim/autoload/plug.vim"
+link vim/ftplugin         "$HOME/.vim/ftplugin"
+link git/gitconfig        "$HOME/.gitconfig"
+link git/gitignore_global "$HOME/.gitignore_global"
 
-cp git/gitconfig $HOME/.gitconfig
-cp git/gitignore_global $HOME/.gitignore_global
-
+if [ ! -f "$HOME/.gitconfig_local" ]; then
+    echo "Note: set your git identity in ~/.gitconfig_local, e.g."
+    echo "  git config -f ~/.gitconfig_local user.email you@example.com"
+fi

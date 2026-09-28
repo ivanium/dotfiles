@@ -8,7 +8,13 @@ Simple custom configurations for:
 
 ## Usage
 
-`./setup.sh` should work.
+`./setup.sh` symlinks the configs into `$HOME` (existing files are moved to
+`*.bk.<timestamp>`) and clones oh-my-zsh, powerlevel10k and the zsh plugins.
+It is safe to re-run.
 
-`./scripts/install.sh` can help install some software dependencies.
+Per-machine settings go in files that are not tracked here:
+* `~/.gitconfig_local` — git `[user]` name/email (setup.sh migrates your existing identity)
+* `~/.zshrc_local`
+* `~/.tmux_local.conf`
 
+`./scripts/install.sh` builds tmux/zsh from source into `~/tools` for machines without sudo.
